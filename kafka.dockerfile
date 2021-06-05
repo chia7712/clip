@@ -1,5 +1,5 @@
-ARG JDK=15
-FROM azul/zulu-openjdk:$JDK
+ARG BASE=azul/zulu-openjdk:15
+FROM $BASE
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y

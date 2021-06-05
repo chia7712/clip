@@ -1,18 +1,17 @@
-FROM ubuntu:21.04
+ARG BASE=azul/zulu-openjdk:8
+FROM $BASE
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y
 
 
 # build tool
-ARG JDK=8
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+RUN apt-get install -y \
   curl \
   git \
   zip \
   wget \
   bzip2 \
-  openjdk-${JDK}-jdk \
   maven \
   gcc \
   python3
