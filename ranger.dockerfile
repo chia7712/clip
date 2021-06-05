@@ -12,7 +12,6 @@ RUN apt-get install -y \
   zip \
   wget \
   bzip2 \
-  maven \
   gcc \
   python3
 
