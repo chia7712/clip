@@ -13,7 +13,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
   bzip2 \
   gcc \
   python3
-RUN apt-get install -y openjdk-8-jdk
+ARG JDK=openjdk-11-jdk
+RUN apt-get install -y $JDK
 # install maven after JDK
 RUN apt-get install -y maven
 
