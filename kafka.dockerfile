@@ -1,20 +1,16 @@
-ARG BASE=azul/zulu-openjdk:15
-FROM $BASE
+FROM ubuntu:21.04
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y
 
-
 # build tool
-# 1) git
-# 2) curl (kafka needs to download gradlew)
-# 3) zip (for gradle)
-# 4) wget (for gradle)
+ARG JDK=openjdk-11-jdk
 RUN apt-get install -y \
   curl \
   git \
   zip \
-  wget
+  wget \
+  $JDK
 
 # add script
 COPY ./loop.sh /

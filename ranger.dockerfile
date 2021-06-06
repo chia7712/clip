@@ -1,12 +1,11 @@
-ARG BASE=maven:3.6.3-openjdk-8
-FROM $BASE
+FROM ubuntu:21.04
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y
 
-
 # build tool
-RUN apt-get install -y \
+ARG JDK=openjdk-8-jdk
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
   curl \
   git \
   zip \
@@ -14,6 +13,9 @@ RUN apt-get install -y \
   bzip2 \
   gcc \
   python3
+RUN apt-get install -y openjdk-8-jdk
+# install maven after JDK
+RUN apt-get install -y maven
 
 # add script
 COPY loop.sh /
@@ -35,4 +37,5 @@ WORKDIR /home/$USER/repo
 ARG BRANCH=master
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
+RUN mvn -T 10 dependency:resolve -Dmaven.artifact.threads=10
 RUN mvn clean package -DskipTests
