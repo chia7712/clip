@@ -1,4 +1,4 @@
-ARG BASE=maven:3-openjdk-8
+ARG BASE=maven:3.6.3-openjdk-8
 FROM $BASE
 
 # prepare to install tools
