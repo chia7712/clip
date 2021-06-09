@@ -13,7 +13,6 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
   bzip2 \
   gcc \
   python3
-ARG JDK=openjdk-11-jdk
 RUN apt-get install -y $JDK
 # install maven after JDK
 RUN apt-get install -y maven
@@ -27,6 +26,11 @@ ARG USER=jenkins
 RUN groupadd $USER
 RUN useradd -ms /bin/bash -g $USER $USER
 
+# copy dependencies
+RUN mkdir /home/$USER/.m2
+COPY --from=chia7712/ranger:base /root/.m2 /home/$USER/.m2
+RUN chown -R $USER:$USER /home/$USER/.m2
+
 # change user
 USER $USER
 
@@ -38,5 +42,4 @@ WORKDIR /home/$USER/repo
 ARG BRANCH=master
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
-RUN mvn -T 10 dependency:resolve -Dmaven.artifact.threads=10
 RUN mvn clean package -DskipTests
