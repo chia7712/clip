@@ -31,5 +31,5 @@ ARG BRANCH=trunk
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
 
-ARG BUILD_COMMAND="./gradlew clean build -x test --no-daemon"
+ARG BUILD_COMMAND="./gradlew clean build -x test --no-daemon --no-parallel"
 RUN $BUILD_COMMAND
