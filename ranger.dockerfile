@@ -42,4 +42,4 @@ WORKDIR /home/$USER/repo
 ARG BRANCH=master
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
-RUN mvn clean package -DskipTests
+RUN mvn clean test -fae
