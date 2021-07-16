@@ -1,8 +1,7 @@
-ARG JDK=11
-FROM azul/zulu-openjdk:$JDK
+FROM ubuntu:21.10
 
-# install libs for mysql
-RUN apt update && apt upgrade -y && apt-get install -y git curl libaio1 libnuma1 libncurses5
+ARG JDK=openjdk-11-jdk
+RUN apt update && apt upgrade -y && apt install -y $JDK git curl libaio1 libnuma1 libncurses5
 
 # change user
 ARG USER=jenkins

@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 # source of jdk 15 by default
 ARG JDK=openjdk-15-jdk

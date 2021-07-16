@@ -1,10 +1,11 @@
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y
 
 # build tool
-RUN apt-get install -y git openjdk-8-jdk
+ARG JDK=openjdk-8-jdk
+RUN apt-get install -y git $JDK
 # install maven after JDK
 RUN apt-get install -y maven
 
