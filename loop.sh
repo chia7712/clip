@@ -42,30 +42,32 @@ if [[ -z "$branch" ]]; then
   branch="trunk"
 fi
 
-if [[ ! -z "$pull_request" ]] && [[ "$pull_request" != "" ]]; then
-  cd ~/repo
+if [[ -n "$pull_request" ]] && [[ "$pull_request" != "" ]]; then
+  cd ~/repo || exit
   git checkout -- .
   git clean -df
+  git pull
   git checkout $branch
   git pull
-  git branch -D $pull_request
-  git fetch origin pull/$pull_request/head:$pull_request
+  git branch -D "$pull_request"
+  git fetch origin pull/"$pull_request"/head:"$pull_request"
   git config --global user.email "you@example.com"
   git config --global user.name "Your Name"
-  git merge $pull_request --no-commit --no-ff
+  git merge "$pull_request" --no-commit --no-ff
   git reset HEAD
 else
-  cd ~/repo
+  cd ~/repo || exit
   git checkout -- .
   git clean -df
+  git pull
   git checkout $branch
   git pull
 fi
 
 if [[ -f "$patch" ]]; then
-  cd ~/repo
-  git apply $patch --stat
-  git apply $patch
+  cd ~/repo || exit
+  git apply "$patch" --stat
+  git apply "$patch"
 fi
 
 echo "command: $command"
@@ -73,10 +75,10 @@ echo "loop: $loop"
 echo "pull_request: $pull_request"
 echo "patch: $patch"
 
-cd ~/repo
+cd ~/repo || exit
 git diff --stat
 
-for i in $(seq 1 $loop);
+for i in $(seq 1 "$loop");
 do
   echo "-------------------[index:$i]--------------------"
 
