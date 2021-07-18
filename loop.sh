@@ -73,7 +73,6 @@ fi
 echo "command: $command"
 echo "loop: $loop"
 echo "pull_request: $pull_request"
-echo "patch: $patch"
 
 cd ~/repo || exit
 git diff --stat
