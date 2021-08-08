@@ -1,5 +1,7 @@
-ARG GOLANG=1.16
-FROM golang:$GOLANG
+FROM ubuntu:21.10
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y git curl golang git make
 
 # add script
 COPY loop.sh /
@@ -12,6 +14,9 @@ RUN useradd -ms /bin/bash -g $USER $USER
 
 # change user
 USER $USER
+
+# install golangci
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
 
 # clone repo
 ARG REPO=https://github.com/apache/incubator-yunikorn-core.git
