@@ -22,6 +22,10 @@ while [[ $# -gt 0 ]]; do
     branch=$2
     shift 2
     ;;
+  --repo)
+    repo=$2
+    shift 2
+    ;;
   *)
     break
     ;;
@@ -42,8 +46,12 @@ if [[ -z "$branch" ]]; then
   branch="trunk"
 fi
 
+if [[ -z "$repo" ]]; then
+  repo="repo"
+fi
+
 if [[ -n "$pull_request" ]] && [[ "$pull_request" != "" ]]; then
-  cd ~/repo || exit
+  cd ~/"$repo" || exit
   git checkout -- .
   git clean -df
   git pull
@@ -56,7 +64,7 @@ if [[ -n "$pull_request" ]] && [[ "$pull_request" != "" ]]; then
   git merge "$pull_request" --no-commit --no-ff
   git reset HEAD
 else
-  cd ~/repo || exit
+  cd ~/"$repo" || exit
   git checkout -- .
   git clean -df
   git pull
@@ -65,7 +73,7 @@ else
 fi
 
 if [[ -f "$patch" ]]; then
-  cd ~/repo || exit
+  cd ~/"$repo" || exit
   git apply "$patch" --stat
   git apply "$patch"
 fi
@@ -74,7 +82,7 @@ echo "command: $command"
 echo "loop: $loop"
 echo "pull_request: $pull_request"
 
-cd ~/repo || exit
+cd ~/"$repo" || exit
 git diff --stat
 
 for i in $(seq 1 "$loop");
