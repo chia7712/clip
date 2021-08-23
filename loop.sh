@@ -74,7 +74,6 @@ fi
 
 if [[ -f "$patch" ]]; then
   cd ~/"$repo" || exit
-  git apply "$patch" --stat
   git apply "$patch"
 fi
 
