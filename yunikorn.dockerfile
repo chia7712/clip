@@ -1,7 +1,7 @@
 FROM ubuntu:21.10
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y git curl golang git make
+RUN apt-get install -y git curl golang git make unzip wget
 
 # add script
 COPY loop.sh /
