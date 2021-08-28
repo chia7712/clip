@@ -1,7 +1,12 @@
 FROM ubuntu:21.10
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y git curl golang git make unzip wget
+RUN apt-get install -y git curl git make unzip wget gcc
+
+RUN wget https://golang.org/dl/go1.15.15.linux-amd64.tar.gz
+RUN tar -zxvf go1.15.15.linux-amd64.tar.gz
+RUN rm -f go1.15.15.linux-amd64.tar.gz
+RUN mv go /opt/
 
 # add script
 COPY loop.sh /
@@ -14,6 +19,9 @@ RUN useradd -ms /bin/bash -g $USER $USER
 
 # change user
 USER $USER
+
+ENV GO_HOME=/opt/go
+ENV PATH=$PATH:$GO_HOME/bin
 
 # install golangci
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
