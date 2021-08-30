@@ -26,11 +26,6 @@ ARG USER=jenkins
 RUN groupadd $USER
 RUN useradd -ms /bin/bash -g $USER $USER
 
-# copy dependencies
-RUN mkdir /home/$USER/.m2
-COPY --from=chia7712/ranger:base /root/.m2 /home/$USER/.m2
-RUN chown -R $USER:$USER /home/$USER/.m2
-
 # change user
 USER $USER
 
@@ -42,4 +37,5 @@ WORKDIR /home/$USER/repo
 ARG BRANCH=master
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
-RUN mvn clean test -fae
+RUN mvn clean package -DskipTests
+RUN mvn test -fae

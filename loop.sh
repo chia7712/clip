@@ -10,10 +10,6 @@ while [[ $# -gt 0 ]]; do
     loop=$2
     shift 2
     ;;
-  --pull_request)
-    pull_request=$2
-    shift 2
-    ;;
   --patch)
     patch=$2
     shift 2
@@ -38,50 +34,33 @@ if [[ -z $command ]]; then
 fi
 
 if [[ -z "$loop" ]]; then
-  echo "--loop \"\" is required"
-  exit 2
+  loop="1"
 fi
 
-if [[ -z "$branch" ]]; then
-  branch="trunk"
+if [[ -n "$repo" ]] && [[ "$repo" != "" ]]; then
+  # change working directory
+  cd "$repo" || exit
 fi
 
-if [[ -z "$repo" ]]; then
-  repo="repo"
-fi
+# cleanup
+git checkout -- . && git clean -df
 
-if [[ -n "$pull_request" ]] && [[ "$pull_request" != "" ]]; then
-  cd ~/"$repo" || exit
-  git checkout -- .
-  git clean -df
-  git pull
-  git checkout $branch
-  git pull
-  git branch -D "$pull_request"
-  git fetch origin pull/"$pull_request"/head:"$pull_request"
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-  git merge "$pull_request" --no-commit --no-ff
-  git reset HEAD
-else
-  cd ~/"$repo" || exit
-  git checkout -- .
-  git clean -df
-  git pull
-  git checkout $branch
+# update
+git pull
+
+# checkout to specify branch
+if [[ -n "$branch" ]] && [[ "$branch" != "" ]]; then
+  git checkout "$branch"
   git pull
 fi
 
 if [[ -f "$patch" ]]; then
-  cd ~/"$repo" || exit
   git apply "$patch"
 fi
 
 echo "command: $command"
 echo "loop: $loop"
-echo "pull_request: $pull_request"
 
-cd ~/"$repo" || exit
 git diff --stat
 
 for i in $(seq 1 "$loop");
