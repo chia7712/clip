@@ -10,6 +10,7 @@ kubectl delete namespace $namespace \
 
 # pre-pull yunikorn image
 docker pull chia7712/yunikorn:scheduler-latest
+docker pull chia7712/yunikorn:web-latest
 
 # cleanup and rebuild
 kubectl delete deployment/yunikorn-scheduler -n $namespace \
