@@ -8,6 +8,7 @@ docker pull chia7712/yunikorn:scheduler-latest
 docker pull chia7712/yunikorn:web-latest
 
 # cleanup and rebuild
+namespace="yunikorn"
 kubectl delete deployment/yunikorn-scheduler -n $namespace \
 ; kubectl delete pods --all -n $namespace \
 ; kubectl delete clusterrolebinding yunikorn-rbac -n $namespace \
