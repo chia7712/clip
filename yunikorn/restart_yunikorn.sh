@@ -19,3 +19,7 @@ kubectl delete deployment/yunikorn-scheduler -n $namespace \
 ; kubectl create -f "$BASEDIR/yunikorn-rbac.yaml" \
 && kubectl create configmap yunikorn-configs --from-file=queues.yaml="$BASEDIR/queues.yaml" -n $namespace \
 && kubectl create -f "$BASEDIR/scheduler.yaml" -n $namespace
+
+# prepare rbac for spark
+kubectl delete rolebinding spark-on-yunikorn -n $namespace \
+; kubectl create rolebinding spark-on-yunikorn --clusterrole=edit --serviceaccount=$namespace:default -n $namespace
