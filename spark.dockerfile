@@ -36,10 +36,10 @@ RUN useradd -ms /bin/bash -g $USER $USER
 USER $USER
 
 # clone and build repo
-#ARG REPO=https://github.com/apache/spark.git
-#ARG BRANCH=master
-#RUN git clone $REPO /home/$USER/repo
-#WORKDIR /home/$USER/repo
-#RUN git config pull.rebase false
-#RUN git checkout $BRANCH
-#RUN mvn clean package -DskipTests
+ARG REPO=https://github.com/apache/spark.git
+ARG BRANCH=master
+RUN git clone $REPO /home/$USER/repo
+WORKDIR /home/$USER/repo
+RUN git config pull.rebase false
+RUN git checkout $BRANCH
+RUN mvn clean package -DskipTests
