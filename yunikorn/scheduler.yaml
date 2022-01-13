@@ -37,7 +37,7 @@ spec:
       serviceAccountName: yunikorn-admin
       containers:
         - name: yunikorn-scheduler-k8s
-          image: chia7712/yunikorn:scheduler-latest
+          image: ghcr.io/chia7712/yunikorn:scheduler-latest
           env:
             - name: LOG_ENCODING
               value: console
