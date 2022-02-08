@@ -29,6 +29,20 @@ function untaintControlNode() {
   kubectl taint nodes --all node-role.kubernetes.io/master-
 }
 
+function copyCertificate() {
+  mkdir -p $HOME/pki/etcd
+  sudo cp /etc/kubernetes/pki/ca.crt $HOME/pki/
+  sudo cp /etc/kubernetes/pki/ca.key $HOME/pki/
+  sudo cp /etc/kubernetes/pki/front-proxy-ca.crt $HOME/pki/
+  sudo cp /etc/kubernetes/pki/front-proxy-ca.key $HOME/pki/
+  sudo cp /etc/kubernetes/pki/front-proxy-client.crt $HOME/pki/
+  sudo cp /etc/kubernetes/pki/front-proxy-client.key $HOME/pki/
+  sudo cp /etc/kubernetes/pki/sa.key $HOME/pki/
+  sudo cp /etc/kubernetes/pki/sa.pub $HOME/pki/
+  sudo cp /etc/kubernetes/pki/etcd/ca.crt $HOME/pki/etcd/
+  sudo cp /etc/kubernetes/pki/etcd/ca.key $HOME/pki/etcd/
+}
+
 # ===================================[main]===================================
 
 # true if you want to build single-machine Kubernetes cluster
@@ -58,3 +72,5 @@ initNetwork
 if [[ "$single" == "true" ]]; then
   untaintControlNode
 fi
+
+copyCertificate
