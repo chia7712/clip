@@ -3,8 +3,8 @@
     nodesortpolicy:
         type: fair
         resourceweights:
-          vcore: 4.11
-          memory: 0.0
+          vcore: 0.5
+          memory: 0.5
     placementrules:
       - name: provided
         create: true
@@ -13,37 +13,6 @@
         properties:
           application.sort.policy: stateaware
         queues:
-          - name: throttled
-            submitacl: "*"
-            parent: true
-            resources:
-              max:
-                memory: 80000
-                vcore: 6000
-            queues:
-              - name: team0
-                parent: false
-                resources:
-                  max:
-                    memory: 80000
-                    vcore: 3000
-              - name: team1
-                parent: false
-                resources:
-                  max:
-                    memory: 80000
-                    vcore: 4000
           - name: infinite
             submitacl: "*"
             parent: false
-  - name: disabled
-    placementrules:
-      - name: provided
-        create: true
-    queues:
-      - name: root
-        submitacl: '*'
-        queues:
-          - name: c0
-            queues:
-              - name: c00
