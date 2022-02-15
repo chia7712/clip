@@ -9,6 +9,7 @@ function showHelp() {
 }
 
 function cleanup() {
+  sudo kubeadm reset -f
   sudo swapoff -a
   sudo rm -rf /etc/cni/net.d
   rm -rf "$HOME"/.kube
