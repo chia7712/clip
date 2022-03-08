@@ -1,11 +1,14 @@
 #!/bin/bash
 
+declare -r HOSTNAME=$(hostname)
+
 # ===================================[functions]===================================
 
 function showHelp() {
   echo "Usage: [ENV] start_k8s.sh"
   echo "Arguments: "
   echo "    --single   true if you want to build single-machine Kubernetes cluster"
+  echo "    --cleanup  true if you want to cleanup previous k8s settings"
 }
 
 function cleanup() {
@@ -13,10 +16,13 @@ function cleanup() {
   sudo swapoff -a
   sudo rm -rf /etc/cni/net.d
   rm -rf "$HOME"/.kube
+  sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F && sudo iptables -X
+  # reload the network setting
+  sudo systemctl restart docker
 }
 
 function initK8s() {
-  sudo kubeadm init --control-plane-endpoint=k8s00 --pod-network-cidr=10.244.0.0/16
+  sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16
   mkdir -p "$HOME"/.kube
   sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
   sudo chown $(id -u):$(id -g) "$HOME"/.kube/config
@@ -48,10 +54,24 @@ function copyCertificate() {
 
 # true if you want to build single-machine Kubernetes cluster
 single="false"
+# true if you want to cleanup k8s cluster only
+cleanup="false"
+# true if you want to collect certificate
+certificate="false"
 while [[ $# -gt 0 ]]; do
   case $1 in
   --single)
     single="$2"
+    shift
+    shift
+    ;;
+  --cleanup)
+    cleanup="$2"
+    shift
+    shift
+    ;;
+  --certificate)
+    certificate="$2"
     shift
     shift
     ;;
@@ -66,7 +86,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-cleanup
+if [[ "$cleanup" == "true" ]]; then
+  cleanup
+fi
+
 initK8s
 initNetwork
 
@@ -74,4 +97,6 @@ if [[ "$single" == "true" ]]; then
   untaintControlNode
 fi
 
-copyCertificate
+if [[ "$certificate" == "true" ]]; then
+  copyCertificate
+fi
