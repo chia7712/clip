@@ -7,7 +7,7 @@
           memory: 0.0
     placementrules:
       - name: provided
-        create: true
+        create: false
     queues:
       - name: root
         properties:
@@ -18,32 +18,21 @@
             parent: true
             resources:
               max:
-                memory: 80000
-                vcore: 6000
+                memory: 4G
+                vcore: 10
             queues:
               - name: team0
                 parent: false
                 resources:
                   max:
-                    memory: 80000
-                    vcore: 3000
+                    memory: 3G
+                    vcore: 4
               - name: team1
                 parent: false
                 resources:
                   max:
-                    memory: 80000
-                    vcore: 4000
+                    memory: 2G
+                    vcore: 3
           - name: infinite
             submitacl: "*"
             parent: false
-  - name: disabled
-    placementrules:
-      - name: provided
-        create: true
-    queues:
-      - name: root
-        submitacl: '*'
-        queues:
-          - name: c0
-            queues:
-              - name: c00
