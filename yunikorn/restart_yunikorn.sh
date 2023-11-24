@@ -2,7 +2,7 @@
 
 declare -r SCRIPT_FOLDER=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 declare -r RBAC_FILE="$SCRIPT_FOLDER/yunikorn-rbac.yaml"
-declare -r QUEUES_FILE="$SCRIPT_FOLDER/queues.yaml"
+declare -r QUEUES_FILE="$SCRIPT_FOLDER/yunikorn-configs.yaml"
 declare -r SCHEDULER_FILE="$SCRIPT_FOLDER/scheduler.yaml"
 declare -r RBAC_NAME="yunikorn-rbac"
 declare -r ADMIN_NAME="yunikorn-admin"
@@ -70,7 +70,7 @@ spec:
             limits:
               cpu: 4
               memory: 2Gi
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           ports:
             - containerPort: 9080
             - containerPort: 9090
