@@ -141,7 +141,7 @@ function setupSpark() {
 
 # ===================================[main]===================================
 
-image="ghcr.io/chia7712/yunikorn/scheduler:latest"
+image="ghcr.io/chia7712/yunikorn:scheduler-arm64-latest"
 namespace="spark"
 account=""
 while [[ $# -gt 0 ]]; do
