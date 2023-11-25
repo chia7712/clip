@@ -29,6 +29,7 @@ function requireNonEmpty() {
 
 function generateScheduler() {
   local image=$1
+  local ui_image=$2
   echo "
 # this file is generated automatically
 apiVersion: apps/v1
@@ -54,15 +55,6 @@ spec:
       containers:
         - name: yunikorn-scheduler-k8s
           image: $image
-          env:
-            - name: LOG_ENCODING
-              value: console
-            - name: LOG_LEVEL
-              value: '-1'
-            - name: CLUSTER_ID
-              value: myCluster
-            - name: CLUSTER_VERSION
-              value: latest
           resources:
             requests:
               cpu: 200m
@@ -70,17 +62,21 @@ spec:
             limits:
               cpu: 4
               memory: 2Gi
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080
-            - containerPort: 9090
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/yunikorn/
-      volumes:
-        - name: config-volume
-          configMap:
-            name: $CONFIG_NAME
+        - name: yunikorn-scheduler-web
+          image: $ui_image
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 500Mi
+          ports:
+            - containerPort: 9889
 " >"$SCHEDULER_FILE"
 }
 
@@ -142,6 +138,7 @@ function setupSpark() {
 # ===================================[main]===================================
 
 image="ghcr.io/chia7712/yunikorn:scheduler-arm64-latest"
+ui_image="ghcr.io/chia7712/yunikorn:web-arm64-latest"
 namespace="spark"
 account=""
 while [[ $# -gt 0 ]]; do
@@ -161,6 +158,11 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
+  --ui_image)
+    ui_image="$2"
+    shift
+    shift
+    ;;
   --help)
     showHelp
     exit 0
@@ -176,7 +178,7 @@ requireNonEmpty "$namespace" "namespace can not be empty"
 requireNonEmpty "$image" "image can not be empty"
 
 generateRbac "$namespace"
-generateScheduler "$image"
+generateScheduler "$image" "$ui_image"
 cleanup "$namespace"
 setup "$namespace"
 
