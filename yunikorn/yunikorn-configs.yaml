@@ -1,18 +1,19 @@
- partitions:
-  - name: default
-    nodesortpolicy:
-        type: fair
-        resourceweights:
-          vcore: 0.5
-          memory: 0.5
-    placementrules:
-      - name: provided
-        create: true
-    queues:
-      - name: root
-        properties:
-          application.sort.policy: stateaware
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yunikorn-configs
+data:
+  queues.yaml: |
+    partitions:
+      - name: default
+        placementrules:
+          - name: tag
+            value: namespace
+            create: true
         queues:
-          - name: infinite
-            submitacl: "*"
-            parent: false
+          - name: root
+            submitacl: '*'
+            queues:
+              - name: infinite
+                submitacl: "*"
+                parent: false

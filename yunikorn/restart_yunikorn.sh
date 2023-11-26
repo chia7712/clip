@@ -123,7 +123,7 @@ function setup() {
   kubectl create namespace "$namespace" \
     ;
   kubectl create -f "$RBAC_FILE" &&
-    kubectl create configmap $CONFIG_NAME --from-file=queues.yaml="$QUEUES_FILE" -n "$namespace" &&
+    kubectl apply -f "$QUEUES_FILE" -n "$namespace" &&
     kubectl create -f "$SCHEDULER_FILE" -n "$namespace"
 }
 
@@ -139,7 +139,7 @@ function setupSpark() {
 
 image="ghcr.io/chia7712/yunikorn:scheduler-arm64-latest"
 ui_image="ghcr.io/chia7712/yunikorn:web-arm64-latest"
-namespace="spark"
+namespace="default"
 account=""
 while [[ $# -gt 0 ]]; do
   case $1 in
