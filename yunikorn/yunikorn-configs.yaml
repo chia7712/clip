@@ -7,13 +7,36 @@ data:
     partitions:
       - name: default
         placementrules:
+          - name: provided
+            create: true
           - name: tag
             value: namespace
             create: true
         queues:
           - name: root
             submitacl: '*'
+            properties:
+              application.sort.policy: stateaware
             queues:
-              - name: infinite
+              - name: fifo
                 submitacl: "*"
                 parent: false
+                properties:
+                  application.sort.policy: fifo
+                resources:
+                  guaranteed:
+                    memory: 1G
+                    vcore: 1
+                  max:
+                    memory: 3G
+                    vcore: 3
+              - name: stateaware
+                submitacl: "*"
+                parent: false
+                resources:
+                  guaranteed:
+                    memory: 1G
+                    vcore: 1
+                  max:
+                    memory: 20G
+                    vcore: 20
