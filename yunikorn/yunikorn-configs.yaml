@@ -7,10 +7,10 @@ data:
     partitions:
       - name: default
         placementrules:
-          - name: provided
-            create: true
           - name: tag
             value: namespace
+            create: true
+          - name: provided
             create: true
         queues:
           - name: root
