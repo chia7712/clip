@@ -139,8 +139,14 @@ function setupSpark() {
 
 image="ghcr.io/chia7712/yunikorn:scheduler-amd64-latest"
 ui_image="ghcr.io/chia7712/yunikorn:web-amd64-latest"
+arch=$(uname -m)
+if [[ "$arch" == arm* ]] ||  [[ "$arch" == aarch* ]] ; then
+  image="ghcr.io/chia7712/yunikorn:scheduler-arm64-latest"
+  ui_image="ghcr.io/chia7712/yunikorn:web-arm64-latest"
+fi
+
 namespace="default"
-account=""
+account="spark"
 while [[ $# -gt 0 ]]; do
   case $1 in
   --namespace)
