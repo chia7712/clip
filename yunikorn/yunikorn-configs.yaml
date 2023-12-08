@@ -6,11 +6,16 @@ data:
   queues.yaml: |
     partitions:
       - name: default
+        nodesortpolicy:
+          type: fair
+          resourceweights:
+            vcore: 1.0
+            memory: 1.0
         placementrules:
+          - name: provided
+            create: false
           - name: tag
             value: namespace
-            create: true
-          - name: provided
             create: true
         queues:
           - name: root
