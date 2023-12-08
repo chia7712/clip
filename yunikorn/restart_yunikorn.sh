@@ -132,6 +132,8 @@ function setupSpark() {
   local account=$2
   kubectl delete rolebinding spark-on-yunikorn -n "$namespace" \
     ;
+  kubectl create serviceaccount $account -n "$namespace" \
+    ;
   kubectl create rolebinding spark-on-yunikorn --clusterrole=edit --serviceaccount=$namespace:$account -n "$namespace"
 }
 
