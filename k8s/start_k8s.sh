@@ -12,11 +12,11 @@ function showHelp() {
 }
 
 function cleanup() {
-  local cri-socket=$1
-  if [[ "${cri-socket}" == "" ]]; then
+  local cri=$1
+  if [[ "${cri}" == "" ]]; then
     sudo kubeadm reset -f
   else
-    sudo kubeadm reset -f --cri-socket "$cri-socket"
+    sudo kubeadm reset -f --cri-socket "$cri"
   fi
   sudo swapoff -a
   sudo rm -rf /etc/cni/net.d
@@ -27,11 +27,11 @@ function cleanup() {
 }
 
 function initK8s() {
-  local cri-socket=$1
-  if [[ "${cri-socket}" == "" ]]; then
+  local cri=$1
+  if [[ "${cri}" == "" ]]; then
     sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16
   else
-    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri-socket"
+    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri"
   fi
   mkdir -p "$HOME"/.kube
   sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
@@ -68,7 +68,7 @@ single="false"
 cleanup="false"
 # true if you want to collect certificate
 certificate="false"
-cri-socket=""
+cri=""
 while [[ $# -gt 0 ]]; do
   case $1 in
   --single)
@@ -86,8 +86,8 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
-  --cri-socket)
-    cri-socket="$2"
+  --cri)
+    cri="$2"
     shift
     shift
     ;;
@@ -103,10 +103,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ "$cleanup" == "true" ]]; then
-  cleanup "$cri-socket"
+  cleanup "$cri"
 fi
 
-initK8s "$cri-socket"
+initK8s "$cri"
 initNetwork
 
 if [[ "$single" == "true" ]]; then
