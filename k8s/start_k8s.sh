@@ -29,9 +29,9 @@ function cleanup() {
 function initK8s() {
   local cri=$1
   if [[ "${cri}" == "" ]]; then
-    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16
+    sudo kubeadm init --pod-network-cidr=10.244.0.0/16
   else
-    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri"
+    sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri"
   fi
   mkdir -p "$HOME"/.kube
   sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
@@ -39,11 +39,11 @@ function initK8s() {
 }
 
 function initNetwork() {
-  kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+  kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 }
 
 function untaintControlNode() {
-  kubectl taint nodes --all node-role.kubernetes.io/control-plane=:NoSchedule-
+  kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 }
 
 function copyCertificate() {
