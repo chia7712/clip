@@ -29,9 +29,9 @@ function cleanup() {
 function initK8s() {
   local cri=$1
   if [[ "${cri}" == "" ]]; then
-    sudo kubeadm init
+    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16
   else
-    sudo kubeadm init -cri-socket "$cri"
+    sudo kubeadm init --control-plane-endpoint=$HOSTNAME --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri"
   fi
   mkdir -p "$HOME"/.kube
   sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
