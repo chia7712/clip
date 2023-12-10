@@ -17,36 +17,27 @@ data:
           - name: tag
             value: namespace
             create: true
-        limits:
-          - limit: user entry
-            users:
-              - user1
-            groups:
-              - developers
-              - devops
-            maxapplications: 20
         queues:
           - name: root
             submitacl: '*'
             properties:
               application.sort.policy: stateaware
-            queues:
-              - name: fifo
-                submitacl: "*"
-                parent: false
-                properties:
-                  application.sort.policy: fifo
-                resources:
-                  guaranteed:
-                    memory: 1G
-                    vcore: 1
-                  max:
-                    memory: 3G
-                    vcore: 3
-              - name: stateaware
-                submitacl: "*"
-                parent: false
+            limits:
+              - limit: user entry
+                users:
+                  - user
+                groups:
+                  - boy
+                  - girl
+                maxresources:
+                  memory: 5G
+                  vcore: 5
                 maxapplications: 5
+            queues:
+              - name: child
+                submitacl: "*"
+                parent: false
+                maxapplications: 20
                 resources:
                   guaranteed:
                     memory: 1G
