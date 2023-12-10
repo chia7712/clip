@@ -17,6 +17,14 @@ data:
           - name: tag
             value: namespace
             create: true
+        limits:
+          - limit: user entry
+            users:
+              - user1
+            groups:
+              - developers
+              - devops
+            maxapplications: 20
         queues:
           - name: root
             submitacl: '*'
@@ -38,6 +46,7 @@ data:
               - name: stateaware
                 submitacl: "*"
                 parent: false
+                maxapplications: 5
                 resources:
                   guaranteed:
                     memory: 1G
