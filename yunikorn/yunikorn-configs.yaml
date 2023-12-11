@@ -23,28 +23,62 @@ data:
             properties:
               application.sort.policy: stateaware
             limits:
-              - limit: user entry
+              - limit: chia_user
                 users:
-                  - user
+                  - chia
                 groups:
-                  - boy
-                  - girl
+                  - tall
+                  - rich
+                  - handsome 
                 maxresources:
-                  memory: 5G
-                  vcore: 5
-                maxapplications: 5
+                  memory: 30G
+                  vcore: 30
+                maxapplications: 30
             childtemplate:
               properties:
                 application.sort.policy: stateaware
             queues:
-              - name: child
+              - name: girlfriend
                 submitacl: "*"
                 parent: false
-                maxapplications: 20
+                maxapplications: 10
+                limits:
+                  - limit: tina_user
+                    users:
+                      - tina
+                    groups:
+                      - crazy
+                      - cute
+                    maxresources:
+                      memory: 5G
+                      vcore: 5
+                    maxapplications: 5
                 resources:
                   guaranteed:
                     memory: 1G
                     vcore: 1
+                  max:
+                    memory: 10G
+                    vcore: 10
+              - name: mistress
+                submitacl: "*"
+                parent: false
+                maxapplications: 20
+                limits:
+                  - limit: ida_user
+                    users:
+                      - ida
+                    groups:
+                      - friendly
+                      - witty
+                    maxresources:
+                      memory: 10G
+                      vcore: 10
+                    maxapplications: 10
+                resources:
+                  guaranteed:
+                    memory: 2G
+                    vcore: 2
                   max:
                     memory: 20G
                     vcore: 20
