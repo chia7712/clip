@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: yunikorn-configs
 data:
+  log.level: "DEBUG"
   queues.yaml: |
     partitions:
       - name: default
