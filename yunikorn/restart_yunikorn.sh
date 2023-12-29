@@ -65,6 +65,11 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
         - name: yunikorn-scheduler-web
           image: $ui_image
           imagePullPolicy: IfNotPresent
@@ -147,8 +152,8 @@ if [[ "$arch" == arm* ]] ||  [[ "$arch" == aarch* ]] ; then
   ui_image="ghcr.io/chia7712/yunikorn:web-arm64-latest"
 fi
 
-namespace="default"
-account="spark"
+namespace="yunikorn"
+account="default"
 while [[ $# -gt 0 ]]; do
   case $1 in
   --namespace)
