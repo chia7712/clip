@@ -1,16 +1,16 @@
 #!/bin/bash
 
-help="[--file to parse the failed tests] [--onlyClass to include only test class]"
-file=""
+help="[--source to parse the failed tests. support local file and remote log url] [--onlyClass to include only test class]"
+source=""
 onlyClass="false"
 while [[ $# -gt 0 ]]; do
   if [[ "$1" == "help" ]]; then
     echo "$help"
     exit 0
   fi
-  if [[ "$1" == "--file" ]]; then
+  if [[ "$1" == "--source" ]]; then
     shift
-    file=$1
+    source=$1
   fi
 
   if [[ "$1" == "--onlyClass" ]]; then
@@ -21,13 +21,22 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ "$file" == "" ]]; then
+if [[ "$source" == "" ]]; then
   echo $help
   exit 2
 fi
 
 # Using file to be a hash map since map function is no supported by all shells yet
 cacheFolder=$(mktemp -d)
+
+# download the file to to parse
+if [[ "$source" == "http"* ]]; then
+  file="$cacheFolder/log.txt"
+  wget $source -O "$file"
+else
+  file=$source
+fi
+
 command="./gradlew cleanTest"
 while IFS= read -r line; do
   # [2024-03-16T07:16:09.375Z] Gradle Test Run :metadata:test > Gradle Test Executor 92 > QuorumControllerTest > testBootstrapZkMigrationRecord() FAILED
