@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.10
 
 ARG JDK=openjdk-11-jdk
 RUN apt update && apt upgrade -y && apt install -y $JDK git curl libaio1 libnuma1 libncurses5
