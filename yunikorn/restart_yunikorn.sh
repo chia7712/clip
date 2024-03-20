@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -i
 
 declare -r SCRIPT_FOLDER=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 declare -r RBAC_FILE="$SCRIPT_FOLDER/yunikorn-rbac.yaml"
