@@ -43,6 +43,10 @@ while IFS= read -r line; do
   if [[ "$line" == *" FAILED"* ]]; then
     # :metadata:test
     module=$(echo $line | cut -d' ' -f 5)
+    # skip the unknown module if we get weird string
+    if [[ "$module" != *":test"* ]]; then
+      continue
+    fi
     moduleName=$(echo -n $module | shasum)
     moduleCacheFile="$cacheFolder/kafka-$moduleName"
 
