@@ -62,7 +62,7 @@ spec:
             limits:
               cpu: 4
               memory: 2Gi
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 9080
           env:
@@ -72,7 +72,7 @@ spec:
                   fieldPath: metadata.namespace
         - name: yunikorn-scheduler-web
           image: $ui_image
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 100m
