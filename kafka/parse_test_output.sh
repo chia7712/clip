@@ -59,10 +59,16 @@ while IFS= read -r line; do
     testClassLine=$(echo $line | cut -d'>' -f 3)
     # remove space
     testClass=$(echo $testClassLine | cut -d' ' -f 1)
-    # case 1 testBootstrapZkMigrationRecord() FAILED
     testCaseLine=$(echo $line | cut -d'>' -f 4)
+    if [[ "$testCaseLine" == *"["* ]]; then
+      # [2024-03-22T07:44:25.550Z] Gradle Test Run :streams:test > Gradle Test Executor 88 > EosV2UpgradeIntegrationTest > [true] > shouldUpgradeFromEosAlphaToEosV2[true] FAILED
+      testCaseLine=$(echo $line | cut -d'>' -f 5)
+    fi
+    # case 1 testBootstrapZkMigrationRecord() FAILED
     # case 2 testSeparateOffsetsTopic FAILED
+    # case 3 shouldUpgradeFromEosAlphaToEosV2[true] FAILED
     testCaseLine=$(echo $testCaseLine | cut -d'(' -f 1)
+    testCaseLine=$(echo $testCaseLine | cut -d'[' -f 1)
     testCase=$(echo $testCaseLine | cut -d' ' -f 1)
 
     # load all cache to de-duplicate tests
