@@ -47,7 +47,7 @@ while IFS= read -r line; do
     if [[ "$module" != *":test"* ]]; then
       continue
     fi
-    moduleName=$(echo -n $module | shasum)
+    moduleName=$(echo -n $module | sha1sum)
     moduleCacheFile="$cacheFolder/kafka-$moduleName"
 
     # create cache file
