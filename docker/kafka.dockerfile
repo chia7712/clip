@@ -1,16 +1,15 @@
-FROM ubuntu:23.10
+ARG JDK_VERSION=21
+FROM azul/zulu-openjdk:$JDK_VERSION
 
 # prepare to install tools
 RUN apt-get update && apt-get upgrade -y
 
 # build tool
-ARG JDK=openjdk-11-jdk
 RUN apt-get install -y \
   curl \
   git \
   zip \
-  wget \
-  $JDK
+  wget
 
 # add script
 COPY ./loop.sh /
@@ -23,7 +22,7 @@ RUN useradd -ms /bin/bash -g $USER $USER
 USER $USER
 
 # clone repo
-ARG REPO=https://github.com/apache/kafka.git
+ARG REPO=https://github.com/chia7712/kafka.git
 RUN git clone $REPO /home/$USER/repo
 WORKDIR /home/$USER/repo
 
