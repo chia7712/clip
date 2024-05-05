@@ -23,12 +23,11 @@ USER $USER
 
 # clone repo
 ARG REPO=https://github.com/chia7712/kafka.git
-RUN git clone $REPO /home/$USER/repo
+RUN git clone --depth=1 $REPO /home/$USER/repo
 WORKDIR /home/$USER/repo
 
 ARG BRANCH=trunk
 RUN git config pull.rebase false
 RUN git checkout $BRANCH
 
-ARG BUILD_COMMAND="./gradlew clean build -x test --no-daemon"
-RUN $BUILD_COMMAND
+RUN ./gradlew clean build -x test --no-daemon && ./gradlew clean
