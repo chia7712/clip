@@ -1,7 +1,8 @@
 #!/bin/bash
 
-help="[--source to parse the failed tests. support local file and remote log url] [--onlyClass to include only test class]"
+help="[--pr to parse the ci report for specific PR number] [--onlyClass to include only test class]"
 source=""
+pr=""
 onlyClass="false"
 while [[ $# -gt 0 ]]; do
   if [[ "$1" == "help" ]]; then
@@ -13,6 +14,11 @@ while [[ $# -gt 0 ]]; do
     source=$1
   fi
 
+    if [[ "$1" == "--pr" ]]; then
+      shift
+      pr=$1
+    fi
+
   if [[ "$1" == "--onlyClass" ]]; then
     shift
     onlyClass=$1
@@ -21,13 +27,20 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ "$source" == "" ]]; then
+if [[ "$source" == "" ]] && [[ "$pr" == "" ]]; then
   echo $help
   exit 2
 fi
 
 # Using file to be a hash map since map function is no supported by all shells yet
 cacheFolder=$(mktemp -d)
+
+if [[ "$pr" != "" ]]; then
+  number=$(wget -qO- https://ci-builds.apache.org/job/Kafka/job/kafka-pr/job/PR-${pr}/lastBuild/buildNumber)
+  source="https://ci-builds.apache.org/blue/rest/organizations/jenkins/pipelines/Kafka/pipelines/kafka-pr/branches/PR-${pr}/runs/${number}/log/?start=0&download=true"
+fi
+
+echo $source
 
 # download the file to to parse
 if [[ "$source" == "http"* ]]; then
