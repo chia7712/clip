@@ -31,7 +31,7 @@ function initK8s() {
   if [[ "${cri}" == "" ]]; then
     sudo kubeadm init --pod-network-cidr=10.244.0.0/16
   else
-    sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket "$cri"
+    sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket="$cri"
   fi
   mkdir -p "$HOME"/.kube
   sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
