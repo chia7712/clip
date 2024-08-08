@@ -16,7 +16,7 @@ function cleanup() {
   if [[ "${cri}" == "" ]]; then
     sudo kubeadm reset -f
   else
-    sudo kubeadm reset -f --cri-socket "$cri"
+    sudo kubeadm reset -f --cri-socket="$cri"
   fi
   sudo swapoff -a
   sudo rm -rf /etc/cni/net.d
