@@ -22,7 +22,7 @@ RUN useradd -ms /bin/bash -g $USER $USER
 USER $USER
 
 # clone repo
-ARG REPO=https://github.com/chia7712/kafka.git
+ARG REPO=https://github.com/apache/kafka.git
 RUN git clone --depth=1 $REPO /home/$USER/repo
 WORKDIR /home/$USER/repo
 
