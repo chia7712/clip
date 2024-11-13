@@ -5,6 +5,7 @@ accounts=""
 projects=""
 token=""
 since="1970-01-01"
+until="2099-12-31"
 while [[ $# -gt 0 ]]; do
   if [[ "$1" == "help" ]]; then
     echo "$help"
@@ -25,6 +26,10 @@ while [[ $# -gt 0 ]]; do
   if [[ "$1" == "--since" ]]; then
     shift
     since=$1
+  fi
+  if [[ "$1" == "--until" ]]; then
+    shift
+    until=$1
   fi
   shift
 done
@@ -64,7 +69,7 @@ for account in "${accounts_array[@]}"; do
   values=""
   for project in "${projects_array[@]}"; do
     # reference: https://gist.github.com/0penBrain/7be59a48aba778c955d992aa69e524c5
-    result=$(curl -I -s -k -H "Authorization: Bearer $token" "https://api.github.com/repos/$project/commits?author=$account&per_page=1&since=$since" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')
+    result=$(curl -I -s -k -H "Authorization: Bearer $token" "https://api.github.com/repos/$project/commits?author=$account&per_page=1&since=$since&until=$until" | sed -n '/^[Ll]ink:/ s/.*"next".*page=\([0-9]*\).*"last".*/\1/p')
     if [[ "$result" != "" ]]; then
       values="$values,$result"
       sum=$((sum + result))
