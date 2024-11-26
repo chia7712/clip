@@ -23,8 +23,8 @@ USER $USER
 
 # clone repo
 ARG REPO=https://github.com/apache/kafka.git
-RUN git clone --depth=1 $REPO /home/$USER/repo
-WORKDIR /home/$USER/repo
+RUN git clone --depth=1 $REPO /home/$USER/kafka
+WORKDIR /home/$USER/kafka
 
 ARG BRANCH=trunk
 RUN git config pull.rebase false
