@@ -1,255 +1,62 @@
 pipeline {
     agent none
     stages {
-        stage('run e2e') {
-            parallel {
-                stage('subset 0') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 1"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-0"
-                            archiveArtifacts artifacts: "results-subset-0/**"
-                        }
+        stage('Run System Tests') {
+            matrix {
+                agent {
+                    label "e2e"
+                }
+                axes {
+                    axis {
+                        name 'SUBSET'
+                        values '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
                     }
                 }
-                stage('subset 1') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+                stages {
+                    stage('clone code') {
+                        steps {
+                            dir("kafka") {
+                                deleteDir()
+                                sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
+                                sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
+                                sh "git switch $REVISION"
                             }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 1"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-1"
-                            archiveArtifacts artifacts: "results-subset-1/**"
                         }
                     }
-                }
-                stage('subset 2') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+                    stage('down containers') {
+                        steps {
+                            dir("kafka") {
+                                sh "./tests/docker/ducker-ak down -f"
                             }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 2"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-2"
-                            archiveArtifacts artifacts: "results-subset-2/**"
                         }
                     }
-                }
-                stage('subset 3') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+                    stage('build code') {
+                        steps {
+                            dir("kafka") {
+                                sh "./gradlew clean build -x test --build-cache"
                             }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 3"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-3"
-                            archiveArtifacts artifacts: "results-subset-3/**"
                         }
                     }
-                }
-                stage('subset 4') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 4"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
+                    stage('run tests') {
+                        steps {
+                            dir("kafka") {
+                                script {
+                                    TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+                                }
+                                withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset ${SUBSET}"]) {
+                                    warnError('test fails') {
+                                        sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
+                                    }
                                 }
                             }
-                            sh "mv results results-subset-4"
-                            archiveArtifacts artifacts: "results-subset-4/**"
                         }
                     }
-                }
-                stage('subset 5') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
+                    stage('archive results') {
+                        steps {
+                            dir("kafka") {
+                                sh "mv results results-subset-${SUBSET}"
+                                archiveArtifacts artifacts: "results-subset-${SUBSET}/**"
                             }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 5"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-5"
-                            archiveArtifacts artifacts: "results-subset-5/**"
-                        }
-                    }
-                }
-                stage('subset 6') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 6"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-6"
-                            archiveArtifacts artifacts: "results-subset-6/**"
-                        }
-                    }
-                }
-                stage('subset 7') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 7"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-7"
-                            archiveArtifacts artifacts: "results-subset-7/**"
-                        }
-                    }
-                }
-                stage('subset 8') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 8"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-8"
-                            archiveArtifacts artifacts: "results-subset-8/**"
-                        }
-                    }
-                }
-                stage('subset 9') {
-                    agent {
-                        label "e2e"
-                    }
-                    steps {
-                        sh "rm -rf kafka && mkdir kafka"
-                        dir("kafka") {
-                            sh "git init && git remote add origin https://github.com/$ACCOUNT/kafka"
-                            sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION"
-                            sh "git switch $REVISION"
-                            sh "./tests/docker/ducker-ak down -f"
-                            sh "./gradlew clean build -x test --build-cache"
-                            script {
-                                TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD')
-                            }
-                            withEnv(["_DUCKTAPE_OPTIONS=--subsets 10 --subset 9"]) {
-                                warnError('some e2e fails') {
-                                    sh "image_name=ducker-ak:${TAG} ./tests/docker/run_tests.sh"
-                                }
-                            }
-                            sh "mv results results-subset-9"
-                            archiveArtifacts artifacts: "results-subset-9/**"
                         }
                     }
                 }
