@@ -13,6 +13,11 @@ pipeline {
                     }
                 }
                 stages {
+                    stage('who am i') {
+                        steps {
+                            sh "hostname"
+                        }
+                    }
                     stage('clone code') {
                         steps {
                             dir("kafka") {
@@ -55,7 +60,7 @@ pipeline {
                         steps {
                             dir("kafka") {
                                 sh "mv results results-subset-${SUBSET}"
-                                archiveArtifacts artifacts: "results-subset-${SUBSET}/**"
+                                archiveArtifacts artifacts: "results-subset-${SUBSET}/**", excludes: "**/kafka-data-logs-1/**, **/kafka-data-logs-2/**"
                             }
                         }
                     }
