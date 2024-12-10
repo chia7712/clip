@@ -59,8 +59,13 @@ pipeline {
                     stage('archive results') {
                         steps {
                             dir("kafka") {
-                                sh "mv results results-subset-${SUBSET}"
-                                archiveArtifacts artifacts: "results-subset-${SUBSET}/**", excludes: "**/kafka-data-logs-1/**, **/kafka-data-logs-2/**"
+                                script {
+                                    if (fileExists('results/latest/session_log.info')) {
+                                        sh "mv results results-subset-${SUBSET}"
+                                        sh "zip -r results-subset-${SUBSET}.zip results-subset-${SUBSET}"
+                                        archiveArtifacts artifacts: "results-subset-${SUBSET}/*/report.txt,results-subset-${SUBSET}.zip"
+                                    }
+                                }
                             }
                         }
                     }
