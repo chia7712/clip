@@ -60,7 +60,7 @@ pipeline {
                         steps {
                             dir("kafka") {
                                 script {
-                                    if (fileExists('results/latest/session_log.info')) {
+                                    if (fileExists('results')) {
                                         sh "mv results results-subset-${SUBSET}"
                                         sh "zip -r results-subset-${SUBSET}.zip results-subset-${SUBSET}"
                                         archiveArtifacts artifacts: "results-subset-${SUBSET}/*/report.txt,results-subset-${SUBSET}.zip"
