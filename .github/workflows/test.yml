@@ -4,7 +4,12 @@ on:
   push:
     branches:
       - main # 當 push 到 main 分支時觸發
-  workflow_dispatch: # 允許手動觸發 workflow
+  workflow_dispatch:
+    inputs:
+      name_list: # 輸入參數的名稱
+        description: 'Comma-separated list of names to draw'
+        required: true
+        default: 'chia7712' # 預設多個字串
 
 jobs:
   build-and-draw:
@@ -28,7 +33,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas matplotlib seaborn
         working-directory: ./my-downloaded-repo
-
+        
+      - name: copy files
+        run: |
+          python copy.py -s "${{ github.event.inputs.text_list }}" -f kafka
+          cp -r kafka/commit_stats ./ 
+        working-directory: ./my-downloaded-repo/github # 確保在下載的 repo 目錄下執行程式
+        
       - name: Execute draw.py
         run: python draw.py
         working-directory: ./my-downloaded-repo/github # 確保在下載的 repo 目錄下執行程式
