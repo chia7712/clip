@@ -30,13 +30,13 @@ jobs:
         working-directory: ./my-downloaded-repo
 
       - name: Execute draw.py
-        run: python github/draw.py
-        working-directory: ./my-downloaded-repo # 確保在下載的 repo 目錄下執行程式
+        run: python draw.py
+        working-directory: ./my-downloaded-repo/github # 確保在下載的 repo 目錄下執行程式
 
       - name: Upload generated images
         uses: actions/upload-artifact@v4
         with:
           name: generated-images # artifacts 的名稱
-          path: my-downloaded-repo # 替換成你的 draw.py 輸出圖檔的目錄
+          path: my-downloaded-repo/github/all_users_commit_trends.jpg # 替換成你的 draw.py 輸出圖檔的目錄
           # 如果你的 draw.py 會直接在 my-downloaded-repo 目錄下生成圖檔，可以直接寫：
           # path: my-downloaded-repo/*.png # 或者 my-downloaded-repo/*.jpg 等
