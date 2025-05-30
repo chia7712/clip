@@ -25,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9' # 選擇一個你 draw.py 支援的 Python 版本
+          python-version: '3.13' # 選擇一個你 draw.py 支援的 Python 版本
 
       # 如果你的 draw.py 需要安裝額外的 Python 函式庫，請取消註解下面這段
       - name: Install Python dependencies
