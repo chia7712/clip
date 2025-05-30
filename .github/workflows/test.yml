@@ -36,7 +36,7 @@ jobs:
         
       - name: copy files
         run: |
-          python copy.py -s "${{ github.event.inputs.text_list }}" -f kafka
+          python copy.py -s "${{ github.event.inputs.name_list }}" -f kafka
           cp -r kafka/commit_stats ./ 
         working-directory: ./my-downloaded-repo/github # 確保在下載的 repo 目錄下執行程式
         
