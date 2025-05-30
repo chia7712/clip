@@ -30,7 +30,7 @@ jobs:
       #   working-directory: ./my-downloaded-repo
 
       - name: Execute draw.py
-        run: python draw.py
+        run: python github/draw.py
         working-directory: ./my-downloaded-repo # 確保在下載的 repo 目錄下執行程式
 
       - name: Upload generated images
