@@ -34,9 +34,9 @@ jobs:
           pip install pandas matplotlib seaborn
         working-directory: ./my-downloaded-repo
         
-      - name: copy files
+      - name: copy stats
         run: |
-          python copy.py -s "${{ github.event.inputs.name_list }}" -f kafka
+          python copy_stats.py -s "${{ github.event.inputs.name_list }}" -f kafka
           cp -r kafka/commit_stats ./ 
         working-directory: ./my-downloaded-repo/github # 確保在下載的 repo 目錄下執行程式
         
