@@ -18,6 +18,11 @@ pipeline {
                             sh "hostname"
                         }
                     }
+                    stage('clean workspace') {
+                        steps {
+                            cleanWs()
+                        }
+                    }
                     stage('sync docker image') {
                         steps {
                             sh "docker pull ghcr.io/chia7712/clip/kafka:jdk21"
@@ -26,9 +31,21 @@ pipeline {
                     stage('run tests') {
                         steps {
                             script {
-                                for (int i = 1; i <= 5; i++) {
-                                    echo "Iteration ${i} of 5"
-                                    sh "docker run --rm ghcr.io/chia7712/clip/kafka:jdk21 /bin/bash -c \" mkdir /tmp/kafka && cd /tmp/kafka && git init && git remote add origin https://github.com/$ACCOUNT/kafka && git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +$REVISION:$REVISION && git switch $REVISION && $COMMAND\""
+                                warnError('test fails') {
+                                    for (int i = 1; i <= 5; i++) {
+                                        sh "mkdir output"
+                                        sh "docker run --rm -v ${env.WORKSPACE}/output:/tmp/output ghcr.io/chia7712/clip/kafka:jdk21 /bin/bash -c \"cp -r /home/jenkins/kafka /tmp/output && cd /tmp/output/kafka && git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 https://github.com/$ACCOUNT/kafka +$REVISION:tmp && git switch tmp && $COMMAND\""
+                                        sh "rm -rf output"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    stage('archive results') {
+                        steps {
+                            script {
+                                if (fileExists('output')) {
+                                    archiveArtifacts artifacts: "output/kafka/**/build/reports/tests/test/**"
                                 }
                             }
                         }
