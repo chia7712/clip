@@ -28,14 +28,21 @@ pipeline {
                             sh "docker pull ghcr.io/chia7712/clip/kafka:jdk21"
                         }
                     }
+                    stage('sync code') {
+                        steps {
+                            dir("kafka-${BUILD_NUMBER}-${SUBSET}") {
+                                sh "git init"
+                                sh "git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 https://github.com/$ACCOUNT/kafka +$REVISION:tmp"
+                                sh "git switch tmp"
+                            }
+                        }
+                    }
                     stage('run tests') {
                         steps {
                             script {
                                 warnError('test fails') {
                                     for (int i = 1; i <= 20; i++) {
-                                        sh "mkdir output-${BUILD_NUMBER}"
-                                        sh "docker run --cpus=3 --rm -v ${env.WORKSPACE}/output-${BUILD_NUMBER}:/tmp/output ghcr.io/chia7712/clip/kafka:jdk${JDK_VERSION} /bin/bash -c \"cp -r /home/jenkins/kafka /tmp/output && cd /tmp/output/kafka && git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 https://github.com/$ACCOUNT/kafka +$REVISION:tmp && git switch tmp && $COMMAND\""
-                                        sh "rm -rf output-${BUILD_NUMBER}"
+                                        sh "docker run --cpus=3 --rm -v ${env.WORKSPACE}/kafka-${BUILD_NUMBER}-${SUBSET}:/tmp/kafka ghcr.io/chia7712/clip/kafka:jdk${JDK_VERSION} /bin/bash -c \"cd /tmp/kafka && $COMMAND\""
                                     }
                                 }
                             }
@@ -44,8 +51,8 @@ pipeline {
                     stage('archive results') {
                         steps {
                             script {
-                                if (fileExists("output-${BUILD_NUMBER}")) {
-                                    archiveArtifacts artifacts: "output-${BUILD_NUMBER}/kafka/**/build/reports/tests/test/**"
+                                if (fileExists("kafka-${BUILD_NUMBER}-${SUBSET}")) {
+                                    archiveArtifacts artifacts: "kafka-${BUILD_NUMBER}-${SUBSET}/**/build/reports/tests/test/**"
                                 }
                             }
                         }
