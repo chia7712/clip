@@ -25,7 +25,7 @@ pipeline {
                     }
                     stage('sync docker image') {
                         steps {
-                            sh "docker pull ghcr.io/chia7712/clip/kafka:jdk21"
+                            sh "docker pull ghcr.io/chia7712/clip/kafka:jdk${JDK_VERSION}"
                         }
                     }
                     stage('sync code') {
